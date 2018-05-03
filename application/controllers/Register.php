@@ -71,11 +71,15 @@ class Register extends CI_Controller {
 
     public function confirm($token='') {
 		$check = $this->db
-					->where('token = ',$token)
-					->where('expired > ',time())
+					->where('token',$token)
+					->where('expired >',time())
 					->get('email_confirmations')
 					->first_row();
 		if($check) {
+			$this->db
+					->where('id',$check->user_id)
+					->set('confirmed',time())
+					->update('users');
 			$status = 'success';
 			$this->load->view('confirmation',[
 				'status' => $status
